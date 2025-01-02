@@ -1,4 +1,4 @@
-name: Espressif IoT Development Framework (ESP-IDF)
+name: ESP-IDF Compile & Build
 
 on: [push, pull_request]
 
@@ -9,6 +9,26 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+      
+      - name: Cache Docker layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-
+
+      - name: Load cached Docker image
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          docker load -i /tmp/.docker/espressif_idf_release-v5.3.tar.gz
+
+      - name: Pre-pull ESP-IDF Docker image
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p /tmp/.docker
+          docker pull espressif/idf:release-v5.3
+          docker save espressif/idf:release-v5.3 | gzip > /tmp/.docker/espressif_idf_release-v5.3.tar.gz
 
       - name: Espressif IoT Development Framework (ESP-IDF)
         uses: espressif/esp-idf-ci-action@v1.2.0
