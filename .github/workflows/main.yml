@@ -32,3 +32,10 @@ jobs:
             build/bootloader/bootloader.bin
             build/bootloader/bootloader.elf
             build/partition_table/partition-table.bin
+
+      - name: Test with Wokwi
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: / # directory with wokwi.toml, relative to repo's root
+          expect_text: 'Hello, world!' # optional
