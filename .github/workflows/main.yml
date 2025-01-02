@@ -21,4 +21,14 @@ jobs:
           target: esp32c6 # optional, default is esp32
           # Command to run inside the docker container (default: builds the project)
           command: idf.py fullclean && idf.py build # optional, default is idf.py build
-                
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifacts
+          path: |
+            build/wifi_softAP.bin
+            build/wifi_softAP.elf
+            build/bootloader/bootloader.bin
+            build/bootloader/bootloader.elf
+            build/partition_table/partition-table.bin
